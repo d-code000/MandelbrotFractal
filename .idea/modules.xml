@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MandelbrotFractal.iml" filepath="$PROJECT_DIR$/MandelbrotFractal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/complex/complex.iml" filepath="$PROJECT_DIR$/complex/complex.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mandelbrot/mandelbrot.iml" filepath="$PROJECT_DIR$/mandelbrot/mandelbrot.iml" />
     </modules>
   </component>
 </project>
