@@ -1,4 +1,4 @@
-﻿package main.java.complex;
+package main.java.complex;
 
 public class ComplexNumber {
     private double real, imag;
@@ -27,12 +27,15 @@ public class ComplexNumber {
     }
     
     public void times(ComplexNumber num) {
-        this.real = this.real * num.real - this.imag * num.imag;
-        this.imag = this.real * num.imag + this.imag * num.real;
+        var newReal = this.real * num.real - this.imag * num.imag;
+        var newImag = this.real * num.imag + this.imag * num.real;
+        
+        this.real = newReal;
+        this.imag = newImag;
     }
     
     public double abs2(){
-        return Math.pow(real, 2) + Math.pow(imag, 2);
+        return (real * real) + (imag * imag);
     }
 
     public double abs(){
