@@ -1,7 +1,6 @@
 package com.disha.math.fractal;
 
 import com.disha.math.complex.ComplexNumber;
-import com.disha.math.fractal.MandelbrotSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -46,9 +45,9 @@ public class MandelbrotSetTest {
         
         Assertions.assertEquals(1000, f.getMaxIterations());
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {f.setMaxIterations(0);});
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {f.setMaxIterations(-1);});
+        Assertions.assertThrows(IllegalArgumentException.class, () -> f.setMaxIterations(0));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> f.setMaxIterations(-1));
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {f.setMaxIterations(5);});
+        Assertions.assertThrows(IllegalArgumentException.class, () -> f.setMaxIterations(5));
     }
 }

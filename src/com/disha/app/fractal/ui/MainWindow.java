@@ -1,7 +1,7 @@
 package com.disha.app.fractal.ui;
 
-import main.java.converter.Converter;
 import com.disha.app.fractal.painting.CartesianPainter;
+import com.disha.converter.Converter;
 
 import javax.swing.*;
 import java.awt.event.ComponentAdapter;
@@ -25,9 +25,7 @@ public class MainWindow extends JFrame {
         converter = new Converter(-1., 1., -1., 1., 800-40, 600-40);
         cartesianPainter = new CartesianPainter(800, 600, converter);
         
-        mainPanel.setPaintAction(graphics -> {
-            cartesianPainter.paint(graphics);
-        });
+        mainPanel.setPaintAction(graphics -> cartesianPainter.paint(graphics));
         
         this.addComponentListener(new ComponentAdapter() {
             @Override

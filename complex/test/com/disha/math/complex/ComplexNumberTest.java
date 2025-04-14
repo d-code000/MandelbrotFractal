@@ -1,6 +1,5 @@
 package com.disha.math.complex;
 
-import com.disha.math.complex.ComplexNumber;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

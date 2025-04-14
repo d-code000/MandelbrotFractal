@@ -1,12 +1,12 @@
 package com.disha.app.fractal.painting;
 
-import main.java.converter.Converter;
+import com.disha.converter.Converter;
 
 import java.awt.*;
 
 public abstract class AbstractPainter implements Painter {
     protected Dimension size;
-    protected Converter converter;
+    protected final Converter converter;
 
     public AbstractPainter(Dimension size, Converter converter) {
         setSize(size);

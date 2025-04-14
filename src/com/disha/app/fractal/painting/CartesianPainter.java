@@ -1,6 +1,6 @@
 package com.disha.app.fractal.painting;
 
-import main.java.converter.Converter;
+import com.disha.converter.Converter;
 
 import java.awt.*;
 
