@@ -1,4 +1,4 @@
-package com.disha.app.fractal.painting;
+package com.disha.app.fractal.painting.fractal.gradient;
 
 public class AlphaFunctions {
     public static final AlphaFunction LINEAR = r -> r;

@@ -1,5 +1,7 @@
-package com.disha.app.fractal.painting;
+package com.disha.app.fractal.painting.fractal.gradient;
 
+import com.disha.app.fractal.painting.fractal.FractalPainter;
+import com.disha.app.fractal.painting.Painter;
 import com.disha.converter.Converter;
 import com.disha.math.complex.ComplexNumber;
 import com.disha.math.fractal.SetPointsComplex;

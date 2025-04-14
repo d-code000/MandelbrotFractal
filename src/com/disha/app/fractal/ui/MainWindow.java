@@ -1,6 +1,8 @@
 package com.disha.app.fractal.ui;
 
-import com.disha.app.fractal.painting.*;
+import com.disha.app.fractal.painting.fractal.FractalPainter;
+import com.disha.app.fractal.painting.fractal.gradient.AlphaFunctions;
+import com.disha.app.fractal.painting.fractal.gradient.FractalGradientPainter;
 import com.disha.converter.Converter;
 import com.disha.math.fractal.MandelbrotSet;
 
