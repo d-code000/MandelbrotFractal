@@ -1,4 +1,4 @@
-package main.java.painting;
+package com.disha.app.fractal.painting;
 
 import main.java.converter.Converter;
 

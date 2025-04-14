@@ -1,6 +1,6 @@
-package main.java.fractal;
+package com.disha.math.fractal;
 
-import main.java.complex.ComplexNumber;
+import com.disha.math.complex.ComplexNumber;
 
 public class MandelbrotSet {
     private int maxIterations = 200;

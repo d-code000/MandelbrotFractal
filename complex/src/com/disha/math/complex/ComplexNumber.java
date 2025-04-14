@@ -1,4 +1,4 @@
-package main.java.complex;
+package com.disha.math.complex;
 
 public class ComplexNumber {
     private double real, imag;

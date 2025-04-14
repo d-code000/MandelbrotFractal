@@ -1,7 +1,7 @@
-package test.java.fractal;
+package com.disha.math.fractal;
 
-import main.java.complex.ComplexNumber;
-import main.java.fractal.MandelbrotSet;
+import com.disha.math.complex.ComplexNumber;
+import com.disha.math.fractal.MandelbrotSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
