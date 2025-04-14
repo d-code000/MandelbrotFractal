@@ -3,17 +3,24 @@ package com.disha.app.fractal.ui;
 import com.disha.app.fractal.painting.fractal.FractalPainter;
 import com.disha.app.fractal.painting.fractal.gradient.AlphaFunctions;
 import com.disha.app.fractal.painting.fractal.gradient.FractalGradientPainter;
+import com.disha.converter.Border;
 import com.disha.converter.Converter;
 import com.disha.math.fractal.MandelbrotSet;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MainWindow extends JFrame {
     private PaintPanel mainPanel;
     private Converter converter;
     private FractalPainter setPainter;
+    
+    private Point lastPressedPoint;
+    private Border lastPressedBorder;
     
     
     public MainWindow() {
@@ -33,6 +40,7 @@ public class MainWindow extends JFrame {
             setPainter.paint(graphics);
         });
         
+        // перерисовка окна при изменении размера окна
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent event) {
@@ -42,25 +50,65 @@ public class MainWindow extends JFrame {
             }
         });
         
-        mainPanel.addMouseWheelListener(e -> {
-            var zoomFactor = 1.0;
-            var notches = e.getWheelRotation();
-            
-            if (notches > 0) {
-                zoomFactor += 0.05;
+        // сохранение последней нажатой точки ЛКМ для перемещения
+        mainPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e){
+                if (SwingUtilities.isLeftMouseButton(e)){
+                    lastPressedPoint = e.getPoint();
+                    lastPressedBorder = converter.border.clone();
+                }
             }
-            else if (notches < 0) {
-                zoomFactor -= 0.05;
-            }
-            
-            converter.border.setMinX(converter.border.getMinX() * zoomFactor);
-            converter.border.setMaxX(converter.border.getMaxX() * zoomFactor);
-            converter.border.setMinY(converter.border.getMinY() * zoomFactor);
-            converter.border.setMaxY(converter.border.getMaxY() * zoomFactor);
-            
-            mainPanel.repaint();
         });
         
+        // перемещение изображения при зажатой ЛКМ
+        mainPanel.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e){
+                if (SwingUtilities.isLeftMouseButton(e)){
+                    var dx = converter.xScr2CrtRatio(e.getX() - lastPressedPoint.x);
+                    var dy = converter.yScr2CrtRatio(e.getY() - lastPressedPoint.y);
+                    
+                    converter.border = lastPressedBorder.clone();
+                    converter.border.xShift(-dx);
+                    converter.border.yShift(dy);
+                    
+                    mainPanel.repaint();
+                }
+            }
+        });
+        
+        // масштабирование по колесику мыши
+        mainPanel.addMouseWheelListener(e -> {
+            double zoomFactor = 1.1;
+            int notches = e.getWheelRotation();
+            double mouseX = converter.xScr2Crt(e.getX());
+            double mouseY = converter.yScr2Crt(e.getY());
+
+            double scale = (notches < 0) ? (1 / zoomFactor) : zoomFactor;
+
+            double minX = converter.border.getMinX();
+            double maxX = converter.border.getMaxX();
+            double minY = converter.border.getMinY();
+            double maxY = converter.border.getMaxY();
+
+            double newWidth = (maxX - minX) * scale;
+            double newHeight = (maxY - minY) * scale;
+            
+            double newMinX = mouseX - (mouseX - minX) * scale;
+            double newMaxX = newMinX + newWidth;
+
+            double newMinY = mouseY - (mouseY - minY) * scale;
+            double newMaxY = newMinY + newHeight;
+
+            converter.border.setMinX(newMinX);
+            converter.border.setMaxX(newMaxX);
+            converter.border.setMinY(newMinY);
+            converter.border.setMaxY(newMaxY);
+
+            mainPanel.repaint();
+        });
+
         this.add(mainPanel);
     }
     
