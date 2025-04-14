@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MandelbrotFractal.iml" filepath="$PROJECT_DIR$/MandelbrotFractal.iml" />
       <module fileurl="file://$PROJECT_DIR$/complex/complex.iml" filepath="$PROJECT_DIR$/complex/complex.iml" />
-      <module fileurl="file://$PROJECT_DIR$/mandelbrot/mandelbrot.iml" filepath="$PROJECT_DIR$/mandelbrot/mandelbrot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fractal/fractal.iml" filepath="$PROJECT_DIR$/fractal/fractal.iml" />
     </modules>
   </component>
 </project>

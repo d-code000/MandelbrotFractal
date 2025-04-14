@@ -16,5 +16,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="complex" />
+    <orderEntry type="module" module-name="fractal" />
   </component>
 </module>

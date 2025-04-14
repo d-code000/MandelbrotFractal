@@ -4,16 +4,15 @@ import com.disha.converter.Converter;
 
 import java.awt.*;
 
-public class CartesianPainter extends AbstractPainter implements Painter {
+public class CartesianPainter extends CartesianLinePainter implements Painter {
 
-    public CartesianPainter(int width, int height, Converter converter) {
-        super(width, height, converter);
+    public CartesianPainter(Converter converter) {
+        super(converter);
     }
     
     public void paint(Graphics graphics) {
-        graphics.drawLine(converter.xCrt2Scr(converter.border.getMinX()), converter.yCrt2Scr(0.0), converter.xCrt2Scr(converter.border.getMaxX()), converter.yCrt2Scr(0.0));
-        graphics.drawLine(converter.xCrt2Scr(0.0), converter.yCrt2Scr(converter.border.getMinY()), converter.xCrt2Scr(0.0), converter.yCrt2Scr(converter.border.getMaxY()));
-
+        super.paint(graphics);
+        
         double epsilon = 1e-6;
         
         for (double i = converter.border.getMinX(); i <= converter.border.getMaxX(); i += 0.1) {

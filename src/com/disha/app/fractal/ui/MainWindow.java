@@ -1,7 +1,9 @@
 package com.disha.app.fractal.ui;
 
 import com.disha.app.fractal.painting.CartesianPainter;
+import com.disha.app.fractal.painting.SetPainter;
 import com.disha.converter.Converter;
+import com.disha.math.fractal.MandelbrotSet;
 
 import javax.swing.*;
 import java.awt.event.ComponentAdapter;
@@ -9,8 +11,10 @@ import java.awt.event.ComponentEvent;
 
 public class MainWindow extends JFrame {
     private PaintPanel mainPanel;
-    private CartesianPainter cartesianPainter;
     private Converter converter;
+    private CartesianPainter cartesianPainter;
+    private SetPainter setPainter;
+    
     
     public MainWindow() {
         setVisible(true);
@@ -22,16 +26,20 @@ public class MainWindow extends JFrame {
     
     private void initialComponents(){
         mainPanel = new PaintPanel();
-        converter = new Converter(-1., 1., -1., 1., 800-40, 600-40);
-        cartesianPainter = new CartesianPainter(800, 600, converter);
+        converter = new Converter(-2, 1, -1, 1);
+        cartesianPainter = new CartesianPainter(converter);
+        setPainter = new SetPainter(converter, new MandelbrotSet(100));
         
-        mainPanel.setPaintAction(graphics -> cartesianPainter.paint(graphics));
+        mainPanel.setPaintAction(graphics -> {
+            cartesianPainter.paint(graphics);
+            setPainter.paint(graphics);
+        });
         
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent event) {
-                converter.setWidthPixels(mainPanel.getWidth() - 20);
-                converter.setHeightPixels(mainPanel.getHeight() - 20);
+                converter.setWidthPixels((int) Math.round(mainPanel.getWidth() * 0.95));
+                converter.setHeightPixels((int) Math.round(mainPanel.getHeight() * 0.95));
             }
         });
         
