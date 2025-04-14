@@ -27,7 +27,7 @@ public class MainWindow extends JFrame {
     private void initialComponents(){
         mainPanel = new PaintPanel();
         converter = new Converter(-2, 1, -1, 1);
-        setPainter = new FractalGradientPainter(converter, new MandelbrotSet(100), AlphaFunctions.SQRT);
+        setPainter = new FractalGradientPainter(converter, new MandelbrotSet(30), AlphaFunctions.SQRT);
         
         mainPanel.setPaintAction(graphics -> {
             setPainter.paint(graphics);
@@ -38,7 +38,27 @@ public class MainWindow extends JFrame {
             public void componentResized(ComponentEvent event) {
                 converter.setWidthPixels(mainPanel.getWidth());
                 converter.setHeightPixels(mainPanel.getHeight());
+                mainPanel.repaint();
             }
+        });
+        
+        mainPanel.addMouseWheelListener(e -> {
+            var zoomFactor = 1.0;
+            var notches = e.getWheelRotation();
+            
+            if (notches > 0) {
+                zoomFactor += 0.05;
+            }
+            else if (notches < 0) {
+                zoomFactor -= 0.05;
+            }
+            
+            converter.border.setMinX(converter.border.getMinX() * zoomFactor);
+            converter.border.setMaxX(converter.border.getMaxX() * zoomFactor);
+            converter.border.setMinY(converter.border.getMinY() * zoomFactor);
+            converter.border.setMaxY(converter.border.getMaxY() * zoomFactor);
+            
+            mainPanel.repaint();
         });
         
         this.add(mainPanel);
