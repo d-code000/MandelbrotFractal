@@ -21,11 +21,12 @@ public class FractalGradientPainter extends FractalPainter implements Painter {
         var g2d = (Graphics2D) graphics;
 
         g2d.setColor(color);
+        
+        var calcData = calcDisplayResult(set::getCountOfPassIteration, Integer.class);
 
         for (int xPixel = 0; xPixel < converter.getWidthPixels(); xPixel++) {
             for (int yPixel = 0; yPixel < converter.getHeightPixels(); yPixel++) {
-                var point = new ComplexNumber(converter.xScr2Crt(xPixel), converter.yScr2Crt(yPixel));
-                var count = set.getCountOfPassIteration(point);
+                var count = calcData[xPixel][yPixel];
                 if (count > 0) {
                     var ratio = (float) count / set.getMaxIterations();
                     var alpha = alphaFunction.apply(ratio);
