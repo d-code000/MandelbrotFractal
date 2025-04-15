@@ -9,15 +9,13 @@ import com.disha.math.fractal.MandelbrotSet;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 
 public class MainWindow extends JFrame {
     private PaintPanel mainPanel;
     private Converter converter;
     private FractalPainter setPainter;
+    private Border initialBorder;
     
     private Point lastPressedPoint;
     private Border lastPressedBorder;
@@ -34,6 +32,7 @@ public class MainWindow extends JFrame {
     private void initialComponents(){
         mainPanel = new PaintPanel();
         converter = new Converter(-2, 1, -1, 1);
+        initialBorder = converter.border.clone();
         setPainter = new FractalGradientPainter(converter, new MandelbrotSet(30), AlphaFunctions.SQRT);
         
         mainPanel.setPaintAction(graphics -> {
@@ -47,6 +46,17 @@ public class MainWindow extends JFrame {
                 converter.setWidthPixels(mainPanel.getWidth());
                 converter.setHeightPixels(mainPanel.getHeight());
                 mainPanel.repaint();
+            }
+        });
+        
+        // возвращение к начальному виду при нажатии кнопки <Home>
+        this.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_HOME) {
+                    converter.border = initialBorder.clone();
+                    mainPanel.repaint();
+                }
             }
         });
         
