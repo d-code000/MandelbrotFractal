@@ -1,10 +1,8 @@
 package com.disha.app.fractal.ui;
 
 import com.disha.app.fractal.painting.fractal.FractalPainter;
-import com.disha.app.fractal.painting.fractal.gradient.AlphaFunction;
 import com.disha.app.fractal.painting.fractal.gradient.AlphaFunctions;
 import com.disha.app.fractal.painting.fractal.gradient.FractalGradientPainter;
-import com.disha.app.fractal.painting.fractal.mono.FractalMonoPainter;
 import com.disha.converter.Border;
 import com.disha.converter.Converter;
 import com.disha.math.fractal.MandelbrotSet;
@@ -25,7 +23,7 @@ public class MainWindow extends JFrame {
     
     public MainWindow() {
         setVisible(true);
-        setSize(800, 600);
+        setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         initialComponents();
@@ -33,7 +31,7 @@ public class MainWindow extends JFrame {
     
     private void initialComponents(){
         mainPanel = new PaintPanel();
-        converter = new Converter(-2, 1, -1, 1);
+        converter = new Converter(-2, 1, -1.5, 1.5);
         initialBorder = converter.border.clone();
         setPainter = new FractalGradientPainter(converter, new MandelbrotSet(100), AlphaFunctions.SQRT);
         
@@ -41,12 +39,15 @@ public class MainWindow extends JFrame {
             setPainter.paint(graphics);
         });
         
-        // перерисовка окна при изменении размера окна
+        // перерисовка окна при изменении размера окна с сохранением пропорций
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent event) {
-                converter.setWidthPixels(mainPanel.getWidth());
-                converter.setHeightPixels(mainPanel.getHeight());
+                setPainter.setSize(mainPanel.getWidth(), mainPanel.getHeight());
+                
+                var sizeMin = Math.min(mainPanel.getWidth(), mainPanel.getHeight());
+                converter.setHeightPixels(sizeMin);
+                converter.setWidthPixels(sizeMin);
                 mainPanel.repaint();
             }
         });

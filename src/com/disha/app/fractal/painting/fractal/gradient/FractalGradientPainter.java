@@ -6,8 +6,6 @@ import com.disha.converter.Converter;
 import com.disha.math.complex.ComplexNumber;
 import com.disha.math.fractal.SetPointsComplex;
 
-import java.awt.*;
-
 public class FractalGradientPainter extends FractalPainter implements Painter {
     private final AlphaFunction alphaFunction;
     
@@ -17,7 +15,7 @@ public class FractalGradientPainter extends FractalPainter implements Painter {
     }
 
     @Override
-    protected int drawPoint(ComplexNumber point) {
+    protected int drawPixel(ComplexNumber point) {
         int count = set.getCountOfPassIteration(point);
         float ratio = (float) count / set.getMaxIterations();
         float alpha = alphaFunction.apply(ratio);

@@ -15,7 +15,7 @@ public class FractalMonoPainter extends FractalPainter implements Painter {
     }
 
     @Override
-    protected int drawPoint(ComplexNumber point) {
+    protected int drawPixel(ComplexNumber point) {
         if (set.isInSet(point)) {
             return color.getRGB();
         }

@@ -28,48 +28,53 @@ public abstract class FractalPainter extends AbstractPainter implements Painter 
         this.set = set;
     }
     
-    protected abstract int drawPoint(ComplexNumber point);
+    // Возвращает пиксель в формате ARGB
+    protected abstract int drawPixel(ComplexNumber point);
     
     public BufferedImage calcImage(){
-        int width = converter.getWidthPixels();
-        int height = converter.getHeightPixels();
+        int width = size.width;
+        int height = size.height;
+        
+        if (width <= 0 || height <= 0) {
+            return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        }
         
         var image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         
         // делаю многопоток через ExecutorService
-        ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
-        
-        // Future<?> - это когда нам не важен тип возвращаемого результата у потока
-        ArrayList<Future<?>> futures = new ArrayList<>();
-        
-        int columnsPerThread = width / THREAD_COUNT;
-        
-        for (int i = 0; i < THREAD_COUNT; i++) {
+        try (ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT)) {
 
-            final int xStart = i * columnsPerThread;
-            final int xEnd = (i == THREAD_COUNT - 1) ? width : (i + 1) * columnsPerThread;
+            // Future<?> - это когда нам не важен тип возвращаемого результата у потока
+            ArrayList<Future<?>> futures = new ArrayList<>();
 
-            futures.add(executor.submit(() -> {
-                for (int xPixel = xStart; xPixel < xEnd; xPixel++) {
-                    for (int yPixel = 0; yPixel < height; yPixel++) {
-                        var point = new ComplexNumber(converter.xScr2Crt(xPixel), converter.yScr2Crt(yPixel));
-                        image.setRGB(xPixel, yPixel, drawPoint(point));
+            int columnsPerThread = width / THREAD_COUNT;
+
+            for (int i = 0; i < THREAD_COUNT; i++) {
+
+                final int xStart = i * columnsPerThread;
+                final int xEnd = (i == THREAD_COUNT - 1) ? width : (i + 1) * columnsPerThread;
+
+                futures.add(executor.submit(() -> {
+                    for (int xPixel = xStart; xPixel < xEnd; xPixel++) {
+                        for (int yPixel = 0; yPixel < height; yPixel++) {
+                            var point = new ComplexNumber(converter.xScr2Crt(xPixel), converter.yScr2Crt(yPixel));
+                            image.setRGB(xPixel, yPixel, drawPixel(point));
+                        }
                     }
-                }
-            }));
-        }
-        
-        // ждём завершения всех задач
-        for (Future<?> f : futures) {
-            try {
-                f.get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+                }));
             }
+
+            // ждём завершения всех задач
+            for (Future<?> f : futures) {
+                f.get();
+            }
+
+            executor.shutdown();
+        
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
-        
-        executor.shutdown();
-        
+
         return image;
     }
 
