@@ -10,6 +10,7 @@ import com.disha.math.fractal.MandelbrotSet;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class MainWindow extends JFrame {
     private PaintPanel mainPanel;
@@ -19,6 +20,9 @@ public class MainWindow extends JFrame {
     
     private Point lastPressedPoint;
     private Border lastPressedBorder;
+    
+    private final int MAX_STEP_COUNT = 1000;
+    private ArrayList<Step> steps = new ArrayList<>();
     
     
     public MainWindow() {
@@ -52,12 +56,18 @@ public class MainWindow extends JFrame {
             }
         });
         
-        // возвращение к начальному виду при нажатии кнопки <Home>
+        // Обработчик клавиатуры
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+                // Home
                 if (e.getKeyCode() == KeyEvent.VK_HOME) {
                     converter.border = initialBorder.clone();
+                    mainPanel.repaint();
+                }
+                // Ctrl + Z
+                if (e.getKeyCode() == KeyEvent.VK_Z && (e.isControlDown())) {
+                    undo();
                     mainPanel.repaint();
                 }
             }
@@ -86,6 +96,7 @@ public class MainWindow extends JFrame {
                     converter.border.xShift(-dx);
                     converter.border.yShift(dy);
                     
+                    addStep();
                     mainPanel.repaint();
                 }
             }
@@ -118,7 +129,8 @@ public class MainWindow extends JFrame {
             converter.border.setMaxX(newMaxX);
             converter.border.setMinY(newMinY);
             converter.border.setMaxY(newMaxY);
-
+            
+            addStep();
             mainPanel.repaint();
         });
 
@@ -127,5 +139,22 @@ public class MainWindow extends JFrame {
     
     public static void main(String[] args) {
         SwingUtilities.invokeLater(MainWindow::new);
+    }
+    
+    private void addStep(){
+        if (steps.size() >= MAX_STEP_COUNT) {
+            steps.removeFirst();
+        }
+        steps.addLast(new Step(converter.border.clone()));
+    }
+    
+    private void undo(){
+        if (steps.size() > 1){
+            steps.removeLast();
+            
+            var border = steps.getLast().border;
+            
+            converter.border = border.clone();
+        }
     }
 }
