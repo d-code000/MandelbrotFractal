@@ -20,10 +20,8 @@ public class MainWindow extends JFrame {
     
     private Point lastPressedPoint;
     private Border lastPressedBorder;
-    
-    private final int MAX_STEP_COUNT = 1000;
-    private ArrayList<Step> steps = new ArrayList<>();
-    
+
+    private final ArrayList<Step> history = new ArrayList<>();
     
     public MainWindow() {
         setVisible(true);
@@ -43,7 +41,7 @@ public class MainWindow extends JFrame {
             setPainter.paint(graphics);
         });
         
-        // перерисовка окна при изменении размера окна с сохранением пропорций
+        // Перерисовка окна при изменении размера окна с сохранением пропорций
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent event) {
@@ -141,18 +139,23 @@ public class MainWindow extends JFrame {
         SwingUtilities.invokeLater(MainWindow::new);
     }
     
+    private Step getCurrentStep() {
+        return new Step(converter.border.clone());
+    }
+    
     private void addStep(){
-        if (steps.size() >= MAX_STEP_COUNT) {
-            steps.removeFirst();
+        int MAX_STEP_COUNT = 1000;
+        if (history.size() >= MAX_STEP_COUNT) {
+            history.removeFirst();
         }
-        steps.addLast(new Step(converter.border.clone()));
+        history.addLast(getCurrentStep());
     }
     
     private void undo(){
-        if (steps.size() > 1){
-            steps.removeLast();
+        if (history.size() > 1){
+            history.removeLast();
             
-            var border = steps.getLast().border;
+            var border = history.getLast().border;
             
             converter.border = border.clone();
         }
