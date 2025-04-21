@@ -7,13 +7,12 @@ import com.disha.math.complex.ComplexNumber;
 import com.disha.math.fractal.SetPointsComplex;
 
 import java.awt.*;
-import java.lang.reflect.Array;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.function.Function;
 
 public abstract class FractalPainter extends AbstractPainter implements Painter {
     protected SetPointsComplex set;
@@ -29,11 +28,13 @@ public abstract class FractalPainter extends AbstractPainter implements Painter 
         this.set = set;
     }
     
-    public <T> T[][] calcDisplayResult(Function<ComplexNumber, T> function, Class<T> clazz){
+    protected abstract int drawPoint(ComplexNumber point);
+    
+    public BufferedImage calcImage(){
         int width = converter.getWidthPixels();
         int height = converter.getHeightPixels();
         
-        T[][] result = (T[][]) Array.newInstance(clazz, width, height);
+        var image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         
         // делаю многопоток через ExecutorService
         ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
@@ -52,7 +53,7 @@ public abstract class FractalPainter extends AbstractPainter implements Painter 
                 for (int xPixel = xStart; xPixel < xEnd; xPixel++) {
                     for (int yPixel = 0; yPixel < height; yPixel++) {
                         var point = new ComplexNumber(converter.xScr2Crt(xPixel), converter.yScr2Crt(yPixel));
-                        result[xPixel][yPixel] = function.apply(point);
+                        image.setRGB(xPixel, yPixel, drawPoint(point));
                     }
                 }
             }));
@@ -69,6 +70,12 @@ public abstract class FractalPainter extends AbstractPainter implements Painter 
         
         executor.shutdown();
         
-        return result;
+        return image;
+    }
+
+    @Override
+    public void paint(Graphics graphics) {
+        var image = calcImage();
+        graphics.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
     }
 }

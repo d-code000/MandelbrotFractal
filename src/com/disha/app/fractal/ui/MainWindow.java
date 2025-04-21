@@ -1,8 +1,10 @@
 package com.disha.app.fractal.ui;
 
 import com.disha.app.fractal.painting.fractal.FractalPainter;
+import com.disha.app.fractal.painting.fractal.gradient.AlphaFunction;
 import com.disha.app.fractal.painting.fractal.gradient.AlphaFunctions;
 import com.disha.app.fractal.painting.fractal.gradient.FractalGradientPainter;
+import com.disha.app.fractal.painting.fractal.mono.FractalMonoPainter;
 import com.disha.converter.Border;
 import com.disha.converter.Converter;
 import com.disha.math.fractal.MandelbrotSet;
@@ -33,7 +35,7 @@ public class MainWindow extends JFrame {
         mainPanel = new PaintPanel();
         converter = new Converter(-2, 1, -1, 1);
         initialBorder = converter.border.clone();
-        setPainter = new FractalGradientPainter(converter, new MandelbrotSet(30), AlphaFunctions.SQRT);
+        setPainter = new FractalGradientPainter(converter, new MandelbrotSet(100), AlphaFunctions.SQRT);
         
         mainPanel.setPaintAction(graphics -> {
             setPainter.paint(graphics);

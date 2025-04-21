@@ -17,23 +17,20 @@ public class FractalGradientPainter extends FractalPainter implements Painter {
     }
 
     @Override
-    public void paint(Graphics graphics) {
-        var g2d = (Graphics2D) graphics;
-
-        g2d.setColor(color);
+    protected int drawPoint(ComplexNumber point) {
+        int count = set.getCountOfPassIteration(point);
+        float ratio = (float) count / set.getMaxIterations();
+        float alpha = alphaFunction.apply(ratio);
         
-        var calcData = calcDisplayResult(set::getCountOfPassIteration, Integer.class);
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
+        
+        r = (int)(r * ratio);
+        g = (int)(g * ratio);
+        b = (int)(b * ratio);
 
-        for (int xPixel = 0; xPixel < converter.getWidthPixels(); xPixel++) {
-            for (int yPixel = 0; yPixel < converter.getHeightPixels(); yPixel++) {
-                var count = calcData[xPixel][yPixel];
-                if (count > 0) {
-                    var ratio = (float) count / set.getMaxIterations();
-                    var alpha = alphaFunction.apply(ratio);
-                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-                    g2d.fillRect(xPixel, yPixel, 1, 1);
-                }
-            }
-        }
+        int a = (int)(alpha * 255);
+        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 }
