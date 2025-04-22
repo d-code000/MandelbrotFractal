@@ -1,4 +1,4 @@
-package com.disha.app.fractal.ui;
+package com.disha.app.fractal.ui.menu;
 
 import javax.swing.*;
 

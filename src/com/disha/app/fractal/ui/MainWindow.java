@@ -1,6 +1,7 @@
 package com.disha.app.fractal.ui;
 
 import com.disha.app.fractal.logic.PaintController;
+import com.disha.app.fractal.ui.menu.MenuBar;
 import com.disha.converter.Converter;
 
 import javax.swing.*;

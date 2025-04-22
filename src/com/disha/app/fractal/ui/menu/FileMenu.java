@@ -1,4 +1,4 @@
-package com.disha.app.fractal.ui;
+package com.disha.app.fractal.ui.menu;
 
 import com.disha.app.fractal.ui.menu.file.ExitMenuItem;
 import com.disha.app.fractal.ui.menu.file.OpenMenuItem;
