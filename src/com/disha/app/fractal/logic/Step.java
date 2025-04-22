@@ -2,7 +2,9 @@ package com.disha.app.fractal.logic;
 
 import com.disha.converter.Border;
 
-public class Step {
+import java.io.Serializable;
+
+public class Step implements Serializable {
     public final Border border;
 
     public Step(Border border) {

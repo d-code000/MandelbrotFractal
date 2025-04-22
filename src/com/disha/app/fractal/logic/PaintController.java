@@ -1,12 +1,9 @@
 package com.disha.app.fractal.logic;
 
 import com.disha.app.fractal.painting.fractal.FractalPainter;
-import com.disha.app.fractal.painting.fractal.gradient.AlphaFunctions;
-import com.disha.app.fractal.painting.fractal.gradient.FractalGradientPainter;
 import com.disha.app.fractal.ui.PaintPanel;
 import com.disha.converter.Border;
 import com.disha.converter.Converter;
-import com.disha.math.fractal.MandelbrotSet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,14 +22,16 @@ public class PaintController {
     
     private final HistoryManager historyManager;
 
-    public PaintController(Component eventSource, PaintPanel mainPanel, Converter converter) {
+    public PaintController(Component eventSource, PaintPanel mainPanel, Converter converter, FractalPainter fractalPainter, HistoryManager historyManager) {
         this.eventSource = eventSource;
         this.mainPanel = mainPanel;
         this.converter = converter;
         
-        this.fractalPainter = new FractalGradientPainter(converter, new MandelbrotSet(100), AlphaFunctions.SQRT);
+        this.fractalPainter = fractalPainter;
         this.initialBorder = converter.border.clone();
-        this.historyManager = new HistoryManager();
+        this.historyManager = historyManager;
+        
+        historyManager.addStep(new Step(initialBorder));
 
         this.mainPanel.setPaintAction(graphics -> {
             fractalPainter.paint(graphics);
