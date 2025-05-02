@@ -11,8 +11,8 @@ import javax.swing.*;
 public class FileMenu extends JMenu {
     public FileMenu(HistoryManager historyManager, FractalPainter fractalPainter) {
         super("File");
-        
-        this.add(new OpenMenuItem());
+
+        this.add(new OpenMenuItem(historyManager));
         this.add(new SaveMenuItem(historyManager, fractalPainter));
         this.add(new ExitMenuItem());
     }

@@ -23,20 +23,25 @@ public class HistoryManager {
         history.addLast(step);
         checkHistorySize();
     }
-    
+
     public void saveState(){
         var step = new Step(converter.border.clone());
         addStep(step);
     }
-    
+
     public Step getLastStep(){
         return history.getLast();
     }
-    
+
     public void undo(){
         if (history.size() > 1) {
             history.removeLast();
         }
         converter.border = history.getLast().border.clone();
+    }
+
+    public void setState(Step step) {
+        converter.border = step.border.clone();
+        addStep(step);
     }
 }
