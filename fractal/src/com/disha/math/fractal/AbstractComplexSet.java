@@ -3,7 +3,7 @@ package com.disha.math.fractal;
 import com.disha.math.complex.ComplexNumber;
 
 public abstract class AbstractComplexSet implements SetPointsComplex {
-    protected int maxIterations = 200;
+    protected int maxIterations = 100;
 
     public int getMaxIterations() {
         return maxIterations;

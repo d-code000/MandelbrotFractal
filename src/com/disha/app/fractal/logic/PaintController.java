@@ -10,63 +10,105 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class PaintController {
-    
+
     private final PaintPanel mainPanel;
     private final Converter converter;
     private final FractalPainter fractalPainter;
     private final Component eventSource;
-    
+
     private final Border initialBorder;
     private Point lastPressedPoint;
     private Border lastPressedBorder;
-    
+
+    // For rectangle selection with the right mouse button
+    private Point selectionStart;
+    private Point selectionEnd;
+    private boolean isSelecting = false;
+
     private final HistoryManager historyManager;
 
     public PaintController(Component eventSource, PaintPanel mainPanel, Converter converter, FractalPainter fractalPainter, HistoryManager historyManager) {
         this.eventSource = eventSource;
         this.mainPanel = mainPanel;
         this.converter = converter;
-        
+
         this.fractalPainter = fractalPainter;
         this.initialBorder = converter.border.clone();
         this.historyManager = historyManager;
-        
+
         historyManager.addState(new State(initialBorder));
 
-        this.mainPanel.setPaintAction(graphics -> {
-            fractalPainter.paint(graphics);
+        // Set up the paint action to draw both the fractal and the selection rectangle
+        this.mainPanel.setPaintAction(g -> {
+            fractalPainter.paint(g);
+            drawSelectionRectangle(g);
         });
-        
+
         initMouseListeners();
         initKeyboardListeners();
         initResizeListeners();
     }
 
     private void initMouseListeners(){
-        // Сохранение последней нажатой точки ЛКМ для перемещения
+        // Mouse press events for both left and right buttons
         mainPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e){
                 if (SwingUtilities.isLeftMouseButton(e)){
+                    // Left button for panning
                     lastPressedPoint = e.getPoint();
                     lastPressedBorder = converter.border.clone();
+                } else if (SwingUtilities.isRightMouseButton(e)) {
+                    // Right button for rectangle selection
+                    selectionStart = e.getPoint();
+                    selectionEnd = e.getPoint(); // Initialize to the same point
+                    isSelecting = true;
+                    mainPanel.repaint();
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e) && isSelecting) {
+                    // When the right button is released, zoom to the selected area
+                    if (selectionStart != null && selectionEnd != null) {
+                        int width = Math.abs(selectionEnd.x - selectionStart.x);
+                        int height = Math.abs(selectionEnd.y - selectionStart.y);
+
+                        // Only zoom if the selection has some size
+                        if (width > 5 && height > 5) {
+                            zoomToSelection();
+                            historyManager.saveState();
+                        }
+                    }
+
+                    // Reset selection
+                    isSelecting = false;
+                    selectionStart = null;
+                    selectionEnd = null;
+                    mainPanel.repaint();
                 }
             }
         });
 
-        // Перемещение изображения при зажатой ЛКМ
+        // Mouse drag events for both left and right buttons
         mainPanel.addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e){
                 if (SwingUtilities.isLeftMouseButton(e)){
+                    // Left button drag for panning
                     var dx = converter.xScr2CrtRatio(e.getX() - lastPressedPoint.x);
                     var dy = converter.yScr2CrtRatio(e.getY() - lastPressedPoint.y);
 
                     converter.border = lastPressedBorder.clone();
                     converter.border.xShift(-dx);
                     converter.border.yShift(dy);
-                    
+
                     historyManager.saveState();
+                    mainPanel.repaint();
+                } else if (SwingUtilities.isRightMouseButton(e) && isSelecting) {
+                    // Right button drag for rectangle selection
+                    selectionEnd = e.getPoint();
                     mainPanel.repaint();
                 }
             }
@@ -104,7 +146,7 @@ public class PaintController {
             mainPanel.repaint();
         });
     }
-    
+
     private void initKeyboardListeners(){
         eventSource.addKeyListener(new KeyAdapter() {
             @Override
@@ -121,7 +163,7 @@ public class PaintController {
             }
         });
     }
-    
+
     private void initResizeListeners(){
         eventSource.addComponentListener(new ComponentAdapter() {
             @Override
@@ -134,5 +176,85 @@ public class PaintController {
                 mainPanel.repaint();
             }
         });
+    }
+
+    /**
+     * Draws the selection rectangle if isSelecting is true
+     */
+    private void drawSelectionRectangle(Graphics g) {
+        if (isSelecting && selectionStart != null && selectionEnd != null) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setColor(Color.WHITE);
+            g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 
+                    10.0f, new float[]{5.0f}, 0.0f)); // Dashed line
+
+            int x = Math.min(selectionStart.x, selectionEnd.x);
+            int y = Math.min(selectionStart.y, selectionEnd.y);
+            int width = Math.abs(selectionEnd.x - selectionStart.x);
+            int height = Math.abs(selectionEnd.y - selectionStart.y);
+
+            g2d.drawRect(x, y, width, height);
+            g2d.dispose();
+        }
+    }
+
+    /**
+     * Zooms to the selected rectangle area while maintaining the fractal's proportions
+     */
+    private void zoomToSelection() {
+        if (selectionStart == null || selectionEnd == null) return;
+
+        // Get the selection rectangle in screen coordinates
+        int x1 = Math.min(selectionStart.x, selectionEnd.x);
+        int y1 = Math.min(selectionStart.y, selectionEnd.y);
+        int x2 = Math.max(selectionStart.x, selectionEnd.x);
+        int y2 = Math.max(selectionStart.y, selectionEnd.y);
+
+        // Calculate the width and height of the selection
+        int width = x2 - x1;
+        int height = y2 - y1;
+
+        // Calculate the center of the selection
+        int centerX = x1 + width / 2;
+        int centerY = y1 + height / 2;
+
+        // Get the current aspect ratio of the view
+        double currentMinX = converter.border.getMinX();
+        double currentMaxX = converter.border.getMaxX();
+        double currentMinY = converter.border.getMinY();
+        double currentMaxY = converter.border.getMaxY();
+        double currentWidth = currentMaxX - currentMinX;
+        double currentHeight = currentMaxY - currentMinY;
+        double currentAspectRatio = currentWidth / currentHeight;
+
+        // Adjust the selection rectangle to maintain the aspect ratio
+        if (width / (double)height > currentAspectRatio) {
+            // Selection is wider than the current view
+            int newHeight = (int)(width / currentAspectRatio);
+            int heightDiff = newHeight - height;
+            y1 -= heightDiff / 2;
+            y2 += heightDiff / 2;
+        } else {
+            // Selection is taller than the current view
+            int newWidth = (int)(height * currentAspectRatio);
+            int widthDiff = newWidth - width;
+            x1 -= widthDiff / 2;
+            x2 += widthDiff / 2;
+        }
+
+        // Convert screen coordinates to cartesian coordinates
+        double minX = converter.xScr2Crt(x1);
+        double maxX = converter.xScr2Crt(x2);
+        double minY = converter.yScr2Crt(y2); // Note: y is inverted in screen coordinates
+        double maxY = converter.yScr2Crt(y1);
+
+        // Update the border with the new coordinates
+        converter.border.setMinX(minX);
+        converter.border.setMaxX(maxX);
+        converter.border.setMinY(minY);
+        converter.border.setMaxY(maxY);
+
+        // Repaint the panel with the new view
+        mainPanel.repaint();
     }
 }
