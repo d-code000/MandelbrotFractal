@@ -6,7 +6,7 @@ import com.disha.converter.Converter;
 import java.util.ArrayList;
 
 public class HistoryManager {
-    private final ArrayList<Step> history = new ArrayList<>();
+    private final ArrayList<State> history = new ArrayList<>();
     private final Converter converter;
     private final PaintPanel mainPanel;
 
@@ -16,23 +16,23 @@ public class HistoryManager {
     }
 
     private void checkHistorySize(){
-        int MAX_STEP_COUNT = 1000;
+        int MAX_STEP_COUNT = 100;
         if (history.size() >= MAX_STEP_COUNT) {
             history.removeFirst();
         }
     }
 
-    public void addStep(Step step){
-        history.addLast(step);
+    public void addState(State state){
+        history.addLast(state);
         checkHistorySize();
     }
 
     public void saveState(){
-        var step = new Step(converter.border.clone());
-        addStep(step);
+        var step = new State(converter.border.clone());
+        addState(step);
     }
 
-    public Step getLastStep(){
+    public State getLastState(){
         return history.getLast();
     }
 
@@ -44,9 +44,9 @@ public class HistoryManager {
         mainPanel.repaint();
     }
 
-    public void setState(Step step) {
-        converter.border = step.border.clone();
-        addStep(step);
+    public void setState(State state) {
+        converter.border = state.border.clone();
+        addState(state);
         mainPanel.repaint();
     }
 }

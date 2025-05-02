@@ -31,7 +31,7 @@ public class PaintController {
         this.initialBorder = converter.border.clone();
         this.historyManager = historyManager;
         
-        historyManager.addStep(new Step(initialBorder));
+        historyManager.addState(new State(initialBorder));
 
         this.mainPanel.setPaintAction(graphics -> {
             fractalPainter.paint(graphics);

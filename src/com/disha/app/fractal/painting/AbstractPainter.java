@@ -6,7 +6,7 @@ import java.awt.*;
 
 public abstract class AbstractPainter implements Painter {
     protected Dimension size;
-    protected Converter converter;
+    protected final Converter converter;
     
     public AbstractPainter(Converter converter) {
         this.converter = converter;

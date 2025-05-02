@@ -1,7 +1,7 @@
 package com.disha.app.fractal.ui.menu.file;
 
 import com.disha.app.fractal.logic.HistoryManager;
-import com.disha.app.fractal.logic.Step;
+import com.disha.app.fractal.logic.State;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -43,7 +43,7 @@ public class OpenMenuItem extends JMenuItem implements ActionListener {
     private void openFractalFile(File file) {
         try {
             var ois = new ObjectInputStream(new FileInputStream(file));
-            var step = (Step) ois.readObject();
+            var step = (State) ois.readObject();
             ois.close();
 
             // Set the state using HistoryManager

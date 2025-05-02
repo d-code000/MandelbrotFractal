@@ -76,7 +76,7 @@ public class SaveMenuItem extends JMenuItem implements ActionListener {
     }
     
     private void saveAsFractal(File file){
-        var step = historyManager.getLastStep();
+        var step = historyManager.getLastState();
         
         try {
             var oos = new ObjectOutputStream(new FileOutputStream(file));
