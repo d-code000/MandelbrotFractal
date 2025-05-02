@@ -2,29 +2,14 @@ package com.disha.math.fractal;
 
 import com.disha.math.complex.ComplexNumber;
 
-public class MandelbrotSet implements SetPointsComplex {
-    private int maxIterations = 200;
+public class MandelbrotSet extends AbstractComplexSet {
 
-    public int getMaxIterations() {
-        return maxIterations;
-    }
-
-    public void setMaxIterations(int maxIterations) {
-        if (maxIterations < 0) {
-            throw new IllegalArgumentException("maxIterations cannot be negative");
-        }
-        if (maxIterations < 10) {
-            throw new IllegalArgumentException("maxIterations too small (must be at least 10)");
-        }
-        this.maxIterations = maxIterations;
-    }
-    
     public MandelbrotSet(){}
-    
+
     public MandelbrotSet(int maxIterations){
         setMaxIterations(maxIterations);
     }
-    
+
     public int getCountOfPassIteration(ComplexNumber num){
         int i = 0;
         ComplexNumber z = new ComplexNumber();
@@ -34,8 +19,5 @@ public class MandelbrotSet implements SetPointsComplex {
         }
         return i - 1;
     }
-    
-    public boolean isInSet(ComplexNumber num){
-        return getCountOfPassIteration(num) == maxIterations;
-    }
+
 }
