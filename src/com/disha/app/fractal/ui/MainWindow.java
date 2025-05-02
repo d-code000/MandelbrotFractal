@@ -9,15 +9,17 @@ import com.disha.converter.Converter;
 import com.disha.math.fractal.MandelbrotSet;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class MainWindow extends JFrame {
     
     public MainWindow() {
-        setVisible(true);
-        setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         
         initialComponents();
+        
+        setVisible(true);
     }
     
     private void initialComponents(){
@@ -29,7 +31,8 @@ public class MainWindow extends JFrame {
         new PaintController(this, mainPanel, converter, fractalPainter, historyManager);
         this.setJMenuBar(new MenuBar(historyManager, fractalPainter));
         
-        this.add(mainPanel);
+        this.setLayout(new BorderLayout());
+        this.add(mainPanel, BorderLayout.CENTER);
     }
     
     public static void main(String[] args) {
