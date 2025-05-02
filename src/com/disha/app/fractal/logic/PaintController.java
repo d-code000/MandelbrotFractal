@@ -66,7 +66,7 @@ public class PaintController {
                     converter.border.xShift(-dx);
                     converter.border.yShift(dy);
                     
-                    historyManager.addStep(new Step(converter.border.clone()));
+                    historyManager.saveState();
                     mainPanel.repaint();
                 }
             }
@@ -100,7 +100,7 @@ public class PaintController {
             converter.border.setMinY(newMinY);
             converter.border.setMaxY(newMaxY);
 
-            historyManager.addStep(new Step(converter.border.clone()));
+            historyManager.saveState();
             mainPanel.repaint();
         });
     }
@@ -116,8 +116,7 @@ public class PaintController {
                 }
                 // Ctrl + Z
                 if (e.getKeyCode() == KeyEvent.VK_Z && (e.isControlDown())) {
-                    var lastStep = historyManager.undo();
-                    converter.border = lastStep.border;
+                    historyManager.undo();
                     mainPanel.repaint();
                 }
             }
