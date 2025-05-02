@@ -117,7 +117,6 @@ public class PaintController {
                 // Ctrl + Z
                 if (e.getKeyCode() == KeyEvent.VK_Z && (e.isControlDown())) {
                     historyManager.undo();
-                    mainPanel.repaint();
                 }
             }
         });

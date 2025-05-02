@@ -24,7 +24,7 @@ public class MainWindow extends JFrame {
         var mainPanel = new PaintPanel();
         var converter = new Converter(-2, 1, -1.5, 1.5);
         var fractalPainter = new FractalGradientPainter(converter, new MandelbrotSet(100), AlphaFunctions.SQRT);
-        var historyManager = new HistoryManager(converter);
+        var historyManager = new HistoryManager(converter, mainPanel);
         
         new PaintController(this, mainPanel, converter, fractalPainter, historyManager);
         this.setJMenuBar(new MenuBar(historyManager, fractalPainter));
