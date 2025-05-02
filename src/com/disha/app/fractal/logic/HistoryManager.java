@@ -16,7 +16,7 @@ public class HistoryManager {
     }
 
     private void checkHistorySize(){
-        int MAX_STEP_COUNT = 100;
+        int MAX_STEP_COUNT = 1000;
         if (history.size() >= MAX_STEP_COUNT) {
             history.removeFirst();
         }
